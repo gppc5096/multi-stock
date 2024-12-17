@@ -15,7 +15,8 @@ export interface TickerData {
 export interface Portfolio {
   id: string;
   name: string;
+  createdAt: number;
+  updatedAt: number;
   totalInvestment: TotalInvestment;
   tickers: TickerData[];
-  createdAt: number;
 }

@@ -31,20 +31,30 @@ const Index = () => {
     localStorage.setItem('tickers', JSON.stringify(tickers));
   }, [tickers]);
 
-  // 포트폴리오 수정 이벤트 리스너 추가
+  // 포트폴리오 수정 이벤트 리스너 수정
   useEffect(() => {
-    const handlePortfolioEdit = (event: CustomEvent) => {
+    const handlePortfolioEdit = (event: CustomEvent<{
+      totalInvestment: TotalInvestment;
+      tickers: TickerData[];
+    }>) => {
       const { totalInvestment: newTotalInvestment, tickers: newTickers } = event.detail;
+      
+      // state 업데이트
       setTotalInvestment(newTotalInvestment);
       setTickers(newTickers);
+
+      // localStorage 업데이트
+      localStorage.setItem('totalInvestment', JSON.stringify(newTotalInvestment));
+      localStorage.setItem('tickers', JSON.stringify(newTickers));
     };
 
-    window.addEventListener('portfolio-edit' as any, handlePortfolioEdit);
+    // 이벤트 리스너 타입 명시적 지정
+    window.addEventListener('portfolio-edit', handlePortfolioEdit as EventListener);
 
     return () => {
-      window.removeEventListener('portfolio-edit' as any, handlePortfolioEdit);
+      window.removeEventListener('portfolio-edit', handlePortfolioEdit as EventListener);
     };
-  }, []);
+  }, []); // 의존성 배열 비움
 
   const handleEdit = (updatedTicker: TickerData) => {
     setTickers(tickers.map(ticker => 
