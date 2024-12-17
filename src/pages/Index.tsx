@@ -8,12 +8,28 @@ import { PortfolioManager } from '@/components/PortfolioManager';
 import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
-  const [totalInvestment, setTotalInvestment] = useState<TotalInvestment>({
-    amount: 0,
-    currency: 'KRW'
+  const [totalInvestment, setTotalInvestment] = useState<TotalInvestment>(() => {
+    const saved = localStorage.getItem('totalInvestment');
+    return saved ? JSON.parse(saved) : {
+      amount: 0,
+      currency: 'KRW'
+    };
   });
-  const [tickers, setTickers] = useState<TickerData[]>([]);
+
+  const [tickers, setTickers] = useState<TickerData[]>(() => {
+    const saved = localStorage.getItem('tickers');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const { toast } = useToast();
+
+  useEffect(() => {
+    localStorage.setItem('totalInvestment', JSON.stringify(totalInvestment));
+  }, [totalInvestment]);
+
+  useEffect(() => {
+    localStorage.setItem('tickers', JSON.stringify(tickers));
+  }, [tickers]);
 
   // 포트폴리오 수정 이벤트 리스너 추가
   useEffect(() => {
@@ -54,6 +70,8 @@ const Index = () => {
       currency: 'KRW'
     });
     setTickers([]);
+    localStorage.removeItem('totalInvestment');
+    localStorage.removeItem('tickers');
     toast({
       title: "초기화 완료",
       description: "모든 데이터가 초기화되었습니다.",
@@ -103,6 +121,13 @@ const Index = () => {
           />
         </div>
       </div>
+
+      {/* Footer 추가 */}
+      <footer className="bg-[#0942bd] text-white py-4 mt-8">
+        <div className="container mx-auto px-4 text-center">
+          <p>© 2024 All Rights Reserved. Made by 나종춘</p>
+        </div>
+      </footer>
     </div>
   );
 };
